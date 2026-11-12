@@ -50,13 +50,13 @@ total_sq_m = total_sq_wa * 4
 # สร้างตัวแปรชื่อ label เก็บข้อความที่ประกอบจากตัวแปร parcel_type และ parcel_no
 # สำหรับแปลงนี้ต้องได้ข้อความ:  โฉนด เลขที่ 11304
 
-label = parcel_type + " เลขที่ " + str(parcel_no)
+label = f"{parcel_type} เลขที่ {parcel_no}"
 
 # ---------- ข้อ 7 ----------
 # สร้างตัวแปรชื่อ area_text เก็บข้อความบอกเนื้อที่ ประกอบจากตัวแปร rai, ngan และ wa
 # สำหรับแปลงนี้ต้องได้ข้อความ:  3 ไร่ 3 งาน 54 ตารางวา
 
-area_text = str(rai) + " ไร่ " + str(ngan) + " งาน " + str(wa) + " ตารางวา"
+area_text = f"{rai} ไร่ {ngan} งาน {wa} ตารางวา"
 
 # ---------- ข้อท้าทาย (ไม่บังคับ) ----------
 # ทำกลับด้าน: มีเนื้อที่เป็นตารางวา ให้แยกออกเป็น ไร่ งาน ตารางวา
@@ -71,4 +71,4 @@ rai_part = area_sq_wa // 400
 ngan_part = (area_sq_wa % 400) // 100
 wa_part = area_sq_wa % 100
 
-print(rai_part, "ไร่", ngan_part, "งาน", wa_part, "ตารางวา") # ลองรันดูผลลัพธ์
+print(f"{rai_part} ไร่ {ngan_part} งาน {wa_part} ตารางวา") # ลองรันดูผลลัพธ์
