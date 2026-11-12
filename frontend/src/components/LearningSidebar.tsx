@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { BookOpen, CheckCircle2, Play, Code2, Sparkles, ChevronRight, Check } from 'lucide-react';
-import { api } from '../services/api';
+import { BookOpen, Code2, Sparkles, ChevronRight } from 'lucide-react';
 
 interface Lesson {
   id: string;
@@ -167,32 +166,9 @@ pub async fn create_feature(Json(payload): Json<Value>) -> impl IntoResponse {
 
 export const LearningSidebar: React.FC = () => {
   const [selectedLessonIndex, setSelectedLessonIndex] = useState(0);
-  const [codeLanguage, setCodeLanguage] = useState<'react' | 'python' | 'rust'>('react');
-  const [testResult, setTestResult] = useState<{ lessonId: string; passed: boolean; message: string } | null>(null);
-  const [isRunningTest, setIsRunningTest] = useState(false);
+  const [codeLanguage, setCodeLanguage] = useState<'react' | 'python' | 'rust'>('python');
 
   const currentLesson = LESSONS_DATA[selectedLessonIndex];
-
-  const handleRunTest = async () => {
-    setIsRunningTest(true);
-    setTestResult(null);
-    try {
-      const res = await api.testExercise(currentLesson.id);
-      setTestResult({
-        lessonId: currentLesson.id,
-        passed: res.passed ?? true,
-        message: res.details || 'การทดสอบผ่านฉลุย! ฟังก์ชันทำงานถูกต้อง',
-      });
-    } catch (err: any) {
-      setTestResult({
-        lessonId: currentLesson.id,
-        passed: false,
-        message: err.message || 'ไม่สามารถเชื่อมต่อ Backend เพื่อรันการทดสอบ',
-      });
-    } finally {
-      setIsRunningTest(false);
-    }
-  };
 
   return (
     <div className="w-96 bg-slate-900 border-l border-slate-800 flex flex-col h-full z-20 shadow-2xl">
@@ -214,10 +190,7 @@ export const LearningSidebar: React.FC = () => {
         {LESSONS_DATA.map((lesson, idx) => (
           <button
             key={lesson.id}
-            onClick={() => {
-              setSelectedLessonIndex(idx);
-              setTestResult(null);
-            }}
+            onClick={() => setSelectedLessonIndex(idx)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition flex items-center gap-1.5 ${
               selectedLessonIndex === idx
                 ? 'bg-blue-600 text-white font-semibold shadow-sm'
@@ -282,46 +255,10 @@ export const LearningSidebar: React.FC = () => {
           </pre>
         </div>
 
-        {/* Interactive Exercise / Test Box */}
+        {/* Try-it-yourself prompt (no automatic check: the course exercises are checked in the terminal) */}
         <div className="p-3 rounded-xl bg-gradient-to-br from-slate-800 to-slate-900 border border-slate-700 space-y-2.5">
-          <div className="flex items-center justify-between">
-            <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
-              🎯 แบบฝึกหัด (Exercise Verification)
-            </h4>
-            <button
-              onClick={handleRunTest}
-              disabled={isRunningTest}
-              className="flex items-center space-x-1.5 px-3 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-500 disabled:opacity-50 text-white text-xs font-semibold shadow-md shadow-emerald-600/20 transition"
-            >
-              <Play className={`w-3 h-3 ${isRunningTest ? 'animate-spin' : ''}`} />
-              <span>{isRunningTest ? 'กำลังตรวจ...' : 'Run Test'}</span>
-            </button>
-          </div>
-
+          <h4 className="text-xs font-bold text-white flex items-center gap-1.5">🎯 ลองทำดู</h4>
           <p className="text-[11px] text-slate-300">{currentLesson.exercisePrompt}</p>
-
-          {/* Test Result Feedback */}
-          {testResult && testResult.lessonId === currentLesson.id && (
-            <div
-              className={`p-2.5 rounded-lg text-xs flex items-start space-x-2 border transition-all ${
-                testResult.passed
-                  ? 'bg-emerald-950/60 border-emerald-800 text-emerald-200'
-                  : 'bg-rose-950/60 border-rose-800 text-rose-200'
-              }`}
-            >
-              {testResult.passed ? (
-                <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0 mt-0.5" />
-              ) : (
-                <span className="w-4 h-4 rounded-full bg-rose-500 text-white flex items-center justify-center text-[10px] flex-shrink-0">
-                  ✕
-                </span>
-              )}
-              <div className="flex-1">
-                <span className="font-bold">{testResult.passed ? 'PASSED!' : 'FAILED!'}</span>
-                <p className="text-[11px] mt-0.5 opacity-90">{testResult.message}</p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
     </div>

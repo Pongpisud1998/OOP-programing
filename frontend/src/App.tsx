@@ -6,7 +6,7 @@ import { MapView } from './components/MapView';
 import { LearningSidebar } from './components/LearningSidebar';
 
 export default function App() {
-  const [currentBackend, setCurrentBackend] = useState<BackendType>('rust');
+  const [currentBackend, setCurrentBackend] = useState<BackendType>('python');
   const [isHealthy, setIsHealthy] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<'map' | 'lessons'>('map');
   const [isLoading, setIsLoading] = useState<boolean>(false);

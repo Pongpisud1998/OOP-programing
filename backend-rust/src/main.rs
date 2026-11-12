@@ -5,7 +5,6 @@ use axum::{
 use std::net::SocketAddr;
 use tower_http::cors::{Any, CorsLayer};
 
-pub mod exercises;
 pub mod routes;
 pub mod services;
 
@@ -37,9 +36,6 @@ async fn main() {
         .route("/api/features/:feature_id", delete(routes::features::delete_feature))
         .route("/api/reset", post(routes::features::reset_features))
         .route("/api/features/reset", post(routes::features::reset_features))
-        // Exercises
-        .route("/api/exercises", get(routes::exercises::list_exercises))
-        .route("/api/exercises/:lesson_id/test", get(routes::exercises::test_exercise))
         .layer(cors);
 
     let addr = SocketAddr::from(([0, 0, 0, 0], 8080));

@@ -44,7 +44,7 @@ export const BACKENDS: Record<BackendType, BackendConfig> = {
 };
 
 export class ApiService {
-  private currentBackend: BackendType = 'rust';
+  private currentBackend: BackendType = 'python';
 
   setBackend(backend: BackendType) {
     this.currentBackend = backend;
@@ -118,18 +118,6 @@ export class ApiService {
       method: 'POST',
     });
     if (!res.ok) throw new Error('Failed to reset features');
-    return res.json();
-  }
-
-  async getExercises(): Promise<any[]> {
-    const res = await fetch(`${this.getBaseUrl()}/api/exercises`);
-    if (!res.ok) throw new Error('Failed to load exercises');
-    return res.json();
-  }
-
-  async testExercise(lessonId: string): Promise<any> {
-    const res = await fetch(`${this.getBaseUrl()}/api/exercises/${lessonId}/test`);
-    if (!res.ok) throw new Error(`Failed to test ${lessonId}`);
     return res.json();
   }
 }
