@@ -1,137 +1,149 @@
-# MapLibre GIS Learning Studio & Dual-Backend API Hub
+# คอร์สพื้นฐานการเขียนโปรแกรม และ MapLibre GIS Learning Studio
 
-โปรเจกต์เว็บแอปพลิเคชันและแบบฝึกหัดพัฒนาแผนที่แบบ Interactive Full-Stack สำหรับศึกษาการใช้งาน **MapLibre GL JS**, แถบเครื่องมือวาด/แก้ไข/ลบด้วย **Geoman (`@geoman-io/maplibre-geoman-free`)**, และการเชื่อมต่อ **RESTful API** สองภาษา:
-- **Rust (Axum - Port 8080)**: เสิร์ฟข้อมูลผังภาษีและที่ดินจริง **LTAX GeoJSON (ขอนแก่น)**
-- **Python (FastAPI - Port 8000)**: เสิร์ฟข้อมูลผังเมืองจริง **DPT Shapefile .zip (สตูล)**
-- **React + TypeScript (Vite - Port 5173)**: หน้าบ้านเว็บแผนที่ มีตัวสลับ Backend, Auto-FitBounds, Layer Manager, Popups และ Geoman Toolbar
+โปรเจกต์นี้มีสองส่วน
 
----
-
-## 1. จุดเด่นของโปรเจกต์ (Key Features)
-
-1. **Dual-Backend Switcher**: สลับระหว่าง Rust (Axum) กับ Python (FastAPI) ได้ทันทีจากแถบเมนูด้านบน
-2. **Auto-FitBounds Camera**: เมื่อสลับ Backend แผนที่จะบิน (FlyTo) ไปยัง Bounding Box ของข้อมูลนั้นอัตโนมัติ (ขอนแก่น vs สตูล)
-3. **Real-world GIS Data**:
-   - **LTAX (Rust)**: ขอบเขตเทศบาล, โซนภาษี, บล็อกภาษี, แปลงที่ดิน (Parcel กว่า 3,600 แปลง), อาคารสิ่งปลูกสร้าง (Building กว่า 1,500 อาคาร)
-   - **DPT (FastAPI)**: ขอบเขตผังเมืองสตูล, แปลงที่ดินผังเมือง (พร้อมชื่อเจ้าของภาษาไทย), ที่สาธารณประโยชน์, พื้นที่สาธารณูปโภค
-4. **Geoman Drawing & Vertex Editing**:
-   - วาด Marker (จุด), Line (เส้น), Polygon (โพลิกอน), Rectangle (สี่เหลี่ยม)
-   - โหมด Edit Vertices (ดึง/ขยับจุดยอดของรูปทรง), Drag Mode, และ Trash (ลบ)
-   - ซิงค์การวาด/แก้ไข/ลบ เข้าสู่ `user_drawings.geojson` ของ Backend ที่เลือกไว้แบบ Real-time พร้อมปุ่ม Reset คืนค่าเริ่มต้น
-5. **Interactive Popups**: คลิกที่รูปทรงบนแผนที่เพื่อดูข้อมูล Attribute ภาษาไทย (ชื่อเจ้าของ, รหัสแปลง, ประเภทผังเมือง, ขนาดพื้นที่)
-6. **5 Step-by-Step Lessons**: มีแถบหลักสูตร 5 บทเรียนพร้อมตัวอย่างโค้ดเปรียบเทียบ 3 ภาษา (React, Python, Rust) และปุ่ม Run Test ตรวจผลลัพธ์
+1. **คอร์สพื้นฐานการเขียนโปรแกรมด้วย Python** สำหรับคนที่ไม่เคยเขียนโปรแกรมมาก่อน อยู่ในโฟลเดอร์ [course/](course/)
+2. **เว็บแอปแผนที่** ที่แสดงข้อมูลแปลงที่ดินจริง เป็นปลายทางของคอร์ส และเป็นเนื้อหาภาคต่อด้าน GIS
 
 ---
 
-## 2. โครงสร้างโปรเจกต์ (Project Structure)
+## เริ่มตรงนี้ (สำหรับน้องฝึกงาน)
+
+ยังไม่ต้องอ่านส่วนอื่นของหน้านี้ และยังไม่ต้องรันเว็บแอปแผนที่
+
+1. เปิด [course/README.md](course/README.md) อ่านวิธีเรียนและกติกา
+2. เริ่มบทแรกที่ [course/lesson00_setup/README.md](course/lesson00_setup/README.md) ซึ่งจะพาติดตั้งเครื่องมือทั้งหมดทีละขั้น
+
+---
+
+## สำหรับผู้ดูแลโปรเจกต์
+
+เนื้อหาตั้งแต่ตรงนี้ลงไปเป็นรายละเอียดทางเทคนิคของเว็บแอปแผนที่
+
+### ภาพรวม
+
+เว็บแอปแผนที่แบบ full-stack สำหรับศึกษา **MapLibre GL JS** เครื่องมือวาดและแก้ไขรูปทรงด้วย **Geoman** (`@geoman-io/maplibre-geoman-free`) และการเชื่อมต่อ **REST API**
+
+| ส่วน | เทคโนโลยี | พอร์ต | ข้อมูล |
+|---|---|---|---|
+| Backend หลัก | Python (FastAPI) | 8000 | DPT Shapefile .zip (สตูล) |
+| Backend เสริม | Rust (Axum) | 8080 | LTAX GeoJSON (ขอนแก่น) |
+| Frontend | React + TypeScript (Vite) | 5173 | |
+
+Frontend เริ่มต้นที่ backend Python ส่วน Rust เป็นตัวเลือกเสริม ไม่ต้องติดตั้งก็ใช้งานแอปได้
+
+### ความสามารถ
+
+1. **สลับ backend** ระหว่าง Python กับ Rust จากแถบเมนูด้านบน แผนที่จะย้ายมุมมองไปยังขอบเขตของข้อมูลชุดนั้น (สตูลหรือขอนแก่น)
+2. **ข้อมูล GIS จริง**
+   - DPT (Python): ขอบเขตผังเมือง แปลงที่ดิน 40 แปลงพร้อมชื่อเจ้าของ ที่สาธารณประโยชน์ พื้นที่สาธารณูปโภค
+   - LTAX (Rust): ขอบเขตเทศบาล โซนภาษี บล็อกภาษี แปลงที่ดินกว่า 3,600 แปลง อาคารกว่า 1,500 หลัง
+3. **วาดและแก้ไขด้วย Geoman**: จุด เส้น โพลิกอน สี่เหลี่ยม แก้จุดยอด ลาก และลบ โดยบันทึกลง `user_drawings.geojson` ของ backend ที่เลือกอยู่ มีปุ่ม Reset คืนค่าเริ่มต้น
+4. **Popup**: คลิกรูปทรงบนแผนที่เพื่อดูข้อมูล attribute
+5. **แถบเนื้อหา GIS 5 หัวข้อ** พร้อมตัวอย่างโค้ดเปรียบเทียบ 3 ภาษา ใช้เป็นเอกสารอ่านประกอบภาคต่อ ไม่มีการตรวจอัตโนมัติ
+
+### โครงสร้างโปรเจกต์
 
 ```text
 OOP-programing/
+├── course/                       # คอร์สพื้นฐาน Python
+│   ├── README.md                 # วิธีเรียน กติกา รายการบท
+│   ├── check.py                  # ตัวตรวจแบบฝึกหัด: python check.py <เลขบท>
+│   ├── checklib.py               # ไลบรารีของตัวตรวจ (standard library ล้วน)
+│   └── lessonNN_*/               # แต่ละบท: README.md, exercise.py, hints.md, checks.py
+│
 ├── data/
-│   ├── ltax/
-│   │   ├── geojson/              # ข้อมูล LTAX ขอนแก่น (boundary, zone, block, parcel, building)
-│   │   └── user_drawings.geojson # ข้อมูลที่ผู้ใช้วาดผ่าน Geoman ในฝั่ง Rust
-│   └── dpt/
-│       ├── shapefile/            # ข้อมูล DPT สตูล (.zip archives: boundary, be_parcel, be_public, af_public)
-│       └── user_drawings.geojson # ข้อมูลที่ผู้ใช้วาดผ่าน Geoman ในฝั่ง FastAPI
+│   ├── dpt/
+│   │   ├── shapefile/            # ข้อมูล DPT สตูล (.zip) และ Satul_CSV_new.csv
+│   │   └── user_drawings.geojson # รูปทรงที่ผู้ใช้วาด ฝั่ง Python
+│   └── ltax/
+│       ├── geojson/              # ข้อมูล LTAX ขอนแก่น
+│       └── user_drawings.geojson # รูปทรงที่ผู้ใช้วาด ฝั่ง Rust
 │
-├── frontend/                     # React + TypeScript + Vite + Tailwind CSS
-│   ├── src/
-│   │   ├── components/
-│   │   │   ├── MapView.tsx       # MapLibre Canvas & Geoman Integration
-│   │   │   ├── LayerManager.tsx  # แผงจัดการเปิด/ปิดเลเยอร์, Opacity, สี
-│   │   │   ├── Navbar.tsx        # แถบเมนู, สลับ Backend, สถานะเซิร์ฟเวอร์
-│   │   │   └── LearningSidebar.tsx # หลักสูตร 5 บทเรียน, Code Viewer, Run Test
-│   │   ├── services/api.ts       # API Client รองรับทั้ง Rust (:8080) และ FastAPI (:8000)
-│   │   └── App.tsx               # Main Layout
-│   └── package.json
-│
-├── backend-python/               # Python FastAPI REST API
+├── backend-python/               # Python FastAPI (พอร์ต 8000)
 │   ├── app/
-│   │   ├── main.py               # FastAPI entrypoint (Port 8000)
-│   │   ├── services/shapefile_service.py # Auto-unzip & PyShp GeoJSON parser
-│   │   └── routes/               # layers.py, features.py, exercises.py
-│   ├── tests/                    # Pytest test suite
+│   │   ├── main.py
+│   │   ├── services/shapefile_service.py
+│   │   └── routes/               # layers.py, features.py
+│   ├── tests/
 │   ├── requirements.txt
 │   └── run.sh
 │
-├── backend-rust/                 # Rust Axum REST API
+├── backend-rust/                 # Rust Axum (พอร์ต 8080)
 │   ├── src/
-│   │   ├── main.rs               # Axum entrypoint (Port 8080)
-│   │   ├── services/storage_service.rs # High-speed LTAX GeoJSON reader & CRUD
-│   │   └── routes/               # layers.rs, features.rs, exercises.rs
+│   │   ├── main.rs
+│   │   ├── services/storage_service.rs
+│   │   └── routes/               # layers.rs, features.rs
 │   ├── Cargo.toml
 │   └── run.sh
 │
-├── start.sh                      # สคริปต์คำสั่งเดียว รันครบทั้ง 3 services
-├── .gitignore                    # กรองไฟล์ cache, target, venv, os files
-└── package.json                  # Root npm scripts
+├── frontend/                     # React + TypeScript + Vite + Tailwind CSS
+│   └── src/
+│       ├── components/           # MapView, LayerManager, Navbar, LearningSidebar
+│       ├── services/api.ts
+│       └── App.tsx
+│
+└── start.sh                      # รันทุก service ด้วยคำสั่งเดียว (macOS / Linux)
 ```
 
----
+### วิธีรันเว็บแอปแผนที่
 
-## 3. วิธีการติดตั้งและรันโปรเจกต์ (Quick Start)
+**รันทุก service ด้วยคำสั่งเดียว (macOS / Linux)**
 
-### วิธีที่ 1: รันคำสั่งเดียวเปิดครบ 3 Services (แนะนำ)
-เปิด Terminal ที่ root directory แล้วรัน:
 ```bash
 ./start.sh
 ```
-สคริปต์จะเริ่มทำงานพร้อมกัน:
-- 🐍 Python FastAPI: [http://localhost:8000](http://localhost:8000)
-- 🦀 Rust Axum: [http://localhost:8080](http://localhost:8080)
-- ⚛️ React Frontend: [http://localhost:5173](http://localhost:5173)
 
----
+สคริปต์จะสร้าง venv และติดตั้ง package ของ Python ให้เอง และข้าม backend Rust ถ้าเครื่องไม่มี `cargo`
 
-### วิธีที่ 2: รันแยกทีละ Service สำหรับการเรียนรู้
+- Python FastAPI: http://localhost:8000
+- Rust Axum: http://localhost:8080
+- Frontend: http://localhost:5173
 
-#### 1. Backend Python (FastAPI)
+**รันแยกทีละ service**
+
 ```bash
+# Backend Python
 cd backend-python
 ./run.sh
-# หรือรันผ่าน venv
-python3 -m venv venv
-venv/bin/pip install -r requirements.txt
-venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
-```
-ทดสอบ Unit Test:
-```bash
-cd backend-python
-PYTHONPATH=. venv/bin/pytest
-```
 
-#### 2. Backend Rust (Axum)
-```bash
+# Backend Rust (ไม่บังคับ)
 cd backend-rust
-cargo run
-```
-ทดสอบ Unit Test:
-```bash
-cd backend-rust
-cargo test
-```
+./run.sh
 
-#### 3. Frontend (React TypeScript)
-```bash
+# Frontend
 cd frontend
 npm install
 npm run dev
 ```
 
----
+**รัน test**
 
-## 4. REST API Documentation (ตรงกันทั้ง Python & Rust)
+```bash
+cd backend-python && venv/bin/pytest
+cd backend-rust && cargo test
+```
+
+test ของทั้งสอง backend เขียนและลบข้อมูลใน `user_drawings.geojson` จริง
+
+**ตรวจว่าแบบฝึกหัดของคอร์สยังใช้งานได้**
+
+```bash
+cd course
+python3 check.py 1                          # ตรวจไฟล์ exercise.py ของบท 1
+python3 check.py 1 path/to/solution.py      # ตรวจไฟล์อื่นด้วยเกณฑ์ของบท 1 (ใช้กับเฉลย)
+```
+
+เฉลยและคู่มือผู้สอนเก็บแยกไว้นอก repo นี้
+
+### REST API (เหมือนกันทั้ง Python และ Rust)
 
 | Method | Endpoint | รายละเอียด |
 |---|---|---|
-| `GET` | `/api/health` | ตรวจสอบสถานะการเชื่อมต่อ และระบุชื่อ Backend/Dataset |
-| `GET` | `/api/layers` | ดึงรายชื่อเลเยอร์ทั้งหมด พร้อม metadata, จำนวนฟีเจอร์ และ BBox |
-| `GET` | `/api/layers/{layer_id}` | ดึงข้อมูล GeoJSON `FeatureCollection` สำหรับวาดบนแผนที่ |
-| `POST` | `/api/features` | บันทึก Feature ที่วาดใหม่จาก Geoman ลง `user_drawings.geojson` |
-| `PUT` | `/api/features/{id}` | อัปเดตพิกัด/ข้อมูลของ Feature ที่ถูกแก้ไข |
-| `DELETE` | `/api/features/{id}` | ลบ Feature ออกจากระบบ |
-| `POST` | `/api/reset` | รีเซ็ตชั้นข้อมูลที่วาดให้กลับเป็นค่าเริ่มต้น |
-| `GET` | `/api/exercises` | ดูรายการบทเรียน 5 สเต็ป |
-| `GET` | `/api/exercises/{lesson_id}/test` | รันแบบทดสอบประจำบทเรียน |
-
+| `GET` | `/api/health` | สถานะของ backend และชื่อชุดข้อมูล |
+| `GET` | `/api/layers` | รายชื่อเลเยอร์ พร้อม metadata จำนวน feature และ bbox |
+| `GET` | `/api/layers/{layer_id}` | GeoJSON `FeatureCollection` ของเลเยอร์ |
+| `POST` | `/api/features` | บันทึก feature ที่วาดใหม่ลง `user_drawings.geojson` |
+| `PUT` | `/api/features/{id}` | อัปเดต feature ที่ถูกแก้ไข |
+| `DELETE` | `/api/features/{id}` | ลบ feature |
+| `POST` | `/api/reset` | ล้างรูปทรงที่วาดทั้งหมด (`/api/features/reset` ใช้ได้เช่นกัน) |
