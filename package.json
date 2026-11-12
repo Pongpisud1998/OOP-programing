@@ -1,0 +1,14 @@
+{
+  "name": "maplibre-gis-studio",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "./start.sh",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:python": "cd backend-python && ./run.sh",
+    "dev:rust": "cd backend-rust && ./run.sh",
+    "test:python": "cd backend-python && PYTHONPATH=. venv/bin/pytest",
+    "test:rust": "cd backend-rust && cargo test"
+  }
+}
+
