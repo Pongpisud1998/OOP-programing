@@ -21,6 +21,9 @@ app.include_router(layers.router)
 app.include_router(features.router)
 app.include_router(exercises.router)
 
+# The frontend and the Rust backend both use /api/reset; keep /api/features/reset as an alias.
+app.add_api_route("/api/reset", features.reset_features, methods=["POST"], tags=["Features"])
+
 @app.get("/api/health", tags=["Health"])
 def health_check():
     return {

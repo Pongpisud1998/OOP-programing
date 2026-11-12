@@ -60,3 +60,10 @@ def test_crud_user_drawings():
     del_res = client.delete("/api/features/pytest-dpt-1")
     assert del_res.status_code == 200
 
+def test_reset_user_drawings():
+    # The frontend calls /api/reset; /api/features/reset is the older path.
+    for path in ["/api/reset", "/api/features/reset"]:
+        response = client.post(path)
+        assert response.status_code == 200
+        assert response.json()["data"]["features"] == []
+

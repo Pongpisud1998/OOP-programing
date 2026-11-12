@@ -30,20 +30,24 @@ echo "🐍 Starting Python FastAPI (Port 8000)..."
     cd backend-python
     if [ ! -d "venv" ]; then
         python3 -m venv venv
-        venv/bin/pip install -r requirements.txt
     fi
+    venv/bin/pip install --quiet -r requirements.txt
     venv/bin/uvicorn app.main:app --host 0.0.0.0 --port 8000
 ) &
 PY_PID=$!
 
-# 2. Start Rust Axum
-echo "🦀 Starting Rust Axum (Port 8080)..."
-(
-    cd backend-rust
-    export PATH=$PATH:~/.cargo/bin
-    cargo run --release
-) &
-RUST_PID=$!
+# 2. Start Rust Axum (optional: skipped when Rust is not installed)
+export PATH=$PATH:~/.cargo/bin
+if command -v cargo >/dev/null 2>&1; then
+    echo "🦀 Starting Rust Axum (Port 8080)..."
+    (
+        cd backend-rust
+        cargo run --release
+    ) &
+    RUST_PID=$!
+else
+    echo "🦀 Rust not installed: skipping the Rust backend (the Python backend is enough)."
+fi
 
 # 3. Start Frontend Vite
 echo "⚛️  Starting Frontend Vite (Port 5173)..."
