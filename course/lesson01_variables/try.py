@@ -23,7 +23,7 @@ text = f"{name} อายุ {age} ปี"
 print(text)
 
 rai = 3
-print(rei)
+print(rai)
 
 print("เลขที่ " + 11304)
 
