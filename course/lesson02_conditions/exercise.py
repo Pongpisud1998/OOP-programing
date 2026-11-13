@@ -48,7 +48,7 @@ print(size_note)
 #   ตั้งแต่ 2000 ตารางวาขึ้นไป            ให้ size เป็น  ใหญ่
 if total_sq_wa < 400:
     size = "เล็ก"
-elif total_sq_wa <= 2000:
+elif total_sq_wa < 2000:
     size = "กลาง"
 else:
     size = "ใหญ่"
@@ -80,5 +80,5 @@ print(is_valid_area)
 # ---------- ข้อท้าทาย 2 (ไม่บังคับ) ----------
 # สร้างตัวแปรชื่อ description ประกอบจากตัวแปร size ของข้อ 4 และ parcel_type
 # สำหรับแปลงนี้ต้องได้ข้อความ:  แปลงขนาดกลาง (โฉนด)
-description = f"แปลงขนาดใหญ่ ({parcel_type})"
+description = f"แปลงขนาด{size} ({parcel_type})"
 print(description)
