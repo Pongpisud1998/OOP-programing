@@ -41,12 +41,10 @@ export const MapView: React.FC<MapViewProps> = ({
           'osm-tiles': {
             type: 'raster',
             tiles: [
-              'https://a.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-              'https://b.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
-              'https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}@2x.png',
+              'https://tile.openstreetmap.org/{z}/{x}/{y}.png'
             ],
             tileSize: 256,
-            attribution: '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap',
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
           },
         },
         layers: [
@@ -59,7 +57,8 @@ export const MapView: React.FC<MapViewProps> = ({
           },
         ],
       },
-      center: [(defaultBBox[0] + defaultBBox[2]) / 2, (defaultBBox[1] + defaultBBox[3]) / 2],
+      center: [-122.420679, 37.772537],
+      //[(defaultBBox[0] + defaultBBox[2]) / 2, (defaultBBox[1] + defaultBBox[3]) / 2],
       zoom: 13,
     });
 

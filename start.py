@@ -136,7 +136,7 @@ def prepare_python():
     say("ตรวจและติดตั้ง package ของ Python")
     run_step(
         [venv_python(), "-m", "pip", "install", "--quiet", "--disable-pip-version-check",
-         "-r", "requirements.txt"],
+        "-r", "requirements.txt"],
         PYTHON_DIR,
         "ติดตั้ง package ของ Python ไม่สำเร็จ ดูข้อความ error ด้านบน "
         "(การรันครั้งแรกต้องต่ออินเทอร์เน็ต)",
@@ -262,7 +262,7 @@ def run_services(requested):
         prepare_python()
         commands["python"] = (
             [venv_python(), "-m", "uvicorn", "app.main:app", "--host", HOST,
-             "--port", PORTS["python"], "--reload", "--reload-dir", "app"],
+            "--port", PORTS["python"], "--reload", "--reload-dir", "app"],
             PYTHON_DIR,
         )
     if "rust" in selected:
