@@ -15,44 +15,69 @@ rai = 3
 ngan = 3
 wa = 54
 
-
 # ---------- ข้อ 1 ----------
 # สร้างตัวแปรชื่อ is_chanote ให้มีค่า True ถ้า parcel_type คือ "โฉนด" และมีค่า False ถ้าไม่ใช่
+if parcel_type == "โฉนด":
+    is_chanote = True
+else:
+    is_chanote = False
 
-
+print(is_chanote)
 
 # ---------- ข้อ 2 ----------
 # สร้างตัวแปรชื่อ is_one_rai_or_more ให้มีค่า True ถ้า total_sq_wa มีตั้งแต่ 400 ขึ้นไป
 # (400 ตารางวาคือ 1 ไร่พอดี ซึ่งนับว่าถึง 1 ไร่)
+if total_sq_wa >= 400:
+    is_one_rai_or_more = True
+else:
+    is_one_rai_or_more = False
 
-
+print(is_one_rai_or_more)
 
 # ---------- ข้อ 3 ----------
 # ใช้ if และ else สร้างตัวแปรชื่อ size_note
 #   ถ้า total_sq_wa มีตั้งแต่ 400 ขึ้นไป  ให้ size_note เป็นข้อความ  ตั้งแต่ 1 ไร่ขึ้นไป
 #   ถ้าไม่ใช่                              ให้ size_note เป็นข้อความ  ไม่ถึง 1 ไร่
-
-
+if total_sq_wa >= 400:
+    size_note = "ตั้งแต่ 1 ไร่ขึ้นไป"
+else:
+    size_note = "ไม่ถึง 1 ไร่"
+    
+print(size_note)
 
 # ---------- ข้อ 4 ----------
 # ใช้ if, elif และ else สร้างตัวแปรชื่อ size แบ่งขนาดแปลงเป็น 3 กลุ่ม
 #   น้อยกว่า 400 ตารางวา               ให้ size เป็น  เล็ก
 #   ตั้งแต่ 400 แต่น้อยกว่า 2000 ตารางวา  ให้ size เป็น  กลาง
 #   ตั้งแต่ 2000 ตารางวาขึ้นไป            ให้ size เป็น  ใหญ่
+if total_sq_wa < 400:
+    size = "เล็ก"
+elif total_sq_wa >= 400 and total_sq_wa < 2000:
+    size = "กลาง"
+else:
+    size = "ใหญ่"
 
-
+print(size)
 
 # ---------- ข้อ 5 ----------
 # สร้างตัวแปรชื่อ is_large_chanote ให้มีค่า True เมื่อเป็นจริงทั้งสองอย่าง:
 # parcel_type คือ "โฉนด" และ total_sq_wa มีตั้งแต่ 2000 ขึ้นไป
+if parcel_type == "โฉนด" and total_sq_wa >= 2000:
+    is_large_chanote = True
+else:
+    is_large_chanote = False
 
-
+print(is_large_chanote)
 
 # ---------- ข้อ 6 ----------
 # ในข้อมูลจริง เอกสาร น.ส.3 ถูกพิมพ์ไว้สองแบบ คือ "นส.3" และ "น.ส.3 ก."
 # สร้างตัวแปรชื่อ is_ns3 ให้มีค่า True เมื่อ parcel_type เป็นแบบใดแบบหนึ่งในสองแบบนี้
+if parcel_type == "นส.3" or parcel_type == "น.ส.3 ก.":
+    is_ns3 = True
+else:
+    is_ns3 = False
 
-
+print(is_ns3)
 
 # ---------- ข้อท้าทาย 1 (ไม่บังคับ) ----------
 # ตรวจว่าเนื้อที่ถูกบันทึกมาถูกรูปแบบไหม
@@ -60,10 +85,17 @@ wa = 54
 # 100 ตารางวาเท่ากับ 1 งาน ดังนั้น wa ต้องมีตั้งแต่ 0 แต่น้อยกว่า 100
 # และ rai ต้องไม่ติดลบ
 # สร้างตัวแปรชื่อ is_valid_area ให้มีค่า True เมื่อถูกต้องครบทั้งสามตัว
+if rai >= 0 and ngan >= 0 and ngan <= 3 and wa >= 0 and wa < 100:
+    is_valid_area = True
+else:
+    is_valid_area = False
 
+print(is_valid_area)
 
 
 # ---------- ข้อท้าทาย 2 (ไม่บังคับ) ----------
 # สร้างตัวแปรชื่อ description ประกอบจากตัวแปร size ของข้อ 4 และ parcel_type
 # สำหรับแปลงนี้ต้องได้ข้อความ:  แปลงขนาดกลาง (โฉนด)
+description = f"แปลงขนาด{size} ({parcel_type})"
 
+print(description)
