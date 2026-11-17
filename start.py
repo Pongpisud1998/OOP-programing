@@ -191,7 +191,12 @@ def _kill_tree(process, force):
             )
         return
     try:
-        os.killpg(process.pid, signal.SIGKILL if force else signal.SIGTERM)
+        if force:
+            os.killpg(process.pid, signal.SIGKILL)
+        elif process.poll() is None:
+            # Only the service itself: it closes its own children in order. Signalling
+            # the whole group at once makes Vite log errors about its helper vanishing.
+            process.terminate()
     except (ProcessLookupError, PermissionError):
         pass
 
@@ -209,7 +214,7 @@ def stop_all(processes, ctrl_c):
 
     On Windows a Ctrl+C already reached the services (they share this console), so
     give them a moment to exit by themselves; anything left is killed as a tree.
-    On macOS/Linux each service is its own process group: ask it to stop, then kill.
+    On macOS/Linux ask each service to stop, then kill its whole process group.
     """
     processes = list(processes)
     try:
