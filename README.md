@@ -66,8 +66,7 @@ OOP-programing/
 │   │   ├── services/shapefile_service.py
 │   │   └── routes/               # layers.py, features.py
 │   ├── tests/
-│   ├── requirements.txt
-│   └── run.sh
+│   └── requirements.txt
 │
 ├── backend-rust/                 # Rust Axum (พอร์ต 8080)
 │   ├── src/
@@ -75,7 +74,7 @@ OOP-programing/
 │   │   ├── services/storage_service.rs
 │   │   └── routes/               # layers.rs, features.rs
 │   ├── Cargo.toml
-│   └── run.sh
+│   └── README.md                 # เอกสารเสริม: ติดตั้ง Rust และรัน backend นี้
 │
 ├── frontend/                     # React + TypeScript + Vite + Tailwind CSS
 │   └── src/
@@ -83,46 +82,63 @@ OOP-programing/
 │       ├── services/api.ts
 │       └── App.tsx
 │
-└── start.sh                      # รันทุก service ด้วยคำสั่งเดียว (macOS / Linux)
+└── start.py                      # รันทุก service ด้วยคำสั่งเดียว (macOS และ Windows)
 ```
 
 ### วิธีรันเว็บแอปแผนที่
 
-**รันทุก service ด้วยคำสั่งเดียว (macOS / Linux)**
+ใช้คำสั่งเดียวกันทั้ง macOS และ Windows ทุกคำสั่งรันจากโฟลเดอร์หลักของโปรเจกต์ (โฟลเดอร์ที่มีไฟล์ `start.py`)
 
-```bash
-./start.sh
+**สิ่งที่ต้องมีในเครื่อง**
+
+| เครื่องมือ | รุ่น | วิธีติดตั้ง | ตรวจด้วยคำสั่ง |
+|---|---|---|---|
+| Python | 3.10 ขึ้นไป | ติดตั้งไว้แล้วในบทที่ 0 ของคอร์ส | `python --version` |
+| Node.js | 20 ขึ้นไป | ดาวน์โหลดรุ่น LTS จาก https://nodejs.org แล้วกดถัดไปจนจบ | `node --version` |
+| Rust | ไม่บังคับ | ดู [backend-rust/README.md](backend-rust/README.md) | `cargo --version` |
+
+หลังติดตั้ง Node.js ให้ปิด VS Code ทั้งโปรแกรมแล้วเปิดใหม่ ไม่เช่นนั้น terminal จะยังไม่รู้จักคำสั่ง `node`
+
+> บน macOS ให้พิมพ์ `python3` แทน `python` ทุกครั้ง เหมือนในคอร์ส
+
+**รันทุก service**
+
+```
+python start.py
 ```
 
-สคริปต์จะสร้าง venv และติดตั้ง package ของ Python ให้เอง และข้าม backend Rust ถ้าเครื่องไม่มี `cargo`
+รอจนเห็นกรอบ `พร้อมใช้งานแล้ว` แล้วเปิด http://localhost:5173 ในเบราว์เซอร์ เมื่อต้องการปิด ให้กด `Ctrl+C` ในหน้าต่าง terminal เดิม
 
-- Python FastAPI: http://localhost:8000
-- Rust Axum: http://localhost:8080
-- Frontend: http://localhost:5173
+สิ่งที่คำสั่งนี้ทำให้
 
-**รันแยกทีละ service**
+- สร้าง venv และติดตั้ง package ของ Python กับของ frontend ให้เอง การรันครั้งแรกจึงต้องต่ออินเทอร์เน็ตและใช้เวลานานกว่าครั้งถัดไป
+- ข้าม backend Rust ถ้าเครื่องไม่มี `cargo` หรือ build ไม่สำเร็จ แล้วรันส่วนที่เหลือต่อ
+- หยุดก่อนเริ่มและบอกสาเหตุ ถ้าไม่มี Node.js หรือมีโปรแกรมอื่นใช้พอร์ต 8000, 8080 หรือ 5173 อยู่
+- backend Python โหลดโค้ดใหม่เองทุกครั้งที่บันทึกไฟล์ใน `backend-python/app`
 
-```bash
-# Backend Python
-cd backend-python
-./run.sh
+| Service | ที่อยู่ |
+|---|---|
+| Frontend | http://localhost:5173 |
+| Python FastAPI | http://localhost:8000 |
+| Rust Axum | http://localhost:8080 |
 
-# Backend Rust (ไม่บังคับ)
-cd backend-rust
-./run.sh
+ทุก service รับการเชื่อมต่อจากเครื่องตัวเองเท่านั้น จึงเปิดจากมือถือหรือเครื่องอื่นในเครือข่ายเดียวกันไม่ได้ ตั้งไว้แบบนี้เพื่อไม่ให้ Windows Firewall ขึ้นหน้าต่างขอสิทธิ์
 
-# Frontend
-cd frontend
-npm install
-npm run dev
+**รันบาง service**
+
+ระบุชื่อ service ที่ต้องการต่อท้าย ชื่อที่ใช้ได้คือ `python`, `rust` และ `frontend`
+
+```
+python start.py python frontend
 ```
 
 **รัน test**
 
-```bash
-cd backend-python && venv/bin/pytest
-cd backend-rust && cargo test
 ```
+python start.py test
+```
+
+คำสั่งนี้รัน test ของ backend Python และของ backend Rust ถ้าเครื่องมี `cargo`
 
 test ของทั้งสอง backend เขียนและลบข้อมูลใน `user_drawings.geojson` จริง
 
