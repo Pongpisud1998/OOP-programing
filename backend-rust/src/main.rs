@@ -38,8 +38,9 @@ async fn main() {
         .route("/api/features/reset", post(routes::features::reset_features))
         .layer(cors);
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8080));
-    println!("🦀 Rust Axum server running on http://localhost:8080");
+    // Local only: a wider bind makes Windows Firewall ask for admin approval.
+    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
+    println!("Rust Axum server running on http://localhost:8080");
 
     let listener = tokio::net::TcpListener::bind(addr).await.unwrap();
     axum::serve(listener, app).await.unwrap();
